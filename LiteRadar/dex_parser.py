@@ -1320,7 +1320,13 @@ class DexFile(object):
             string_data_off += (length + 2) # + \0 + size bit
 
             # self.DexStringIdList.append(dex_str.decode('utf-8'))
-            self.DexStringIdList.append(dex_str)
+
+            try:
+                dex_str_string = dex_str.decode()
+            except:
+                dex_str_string = ''
+
+            self.DexStringIdList.append(dex_str_string)
 
     def print_DexStringId(self):
 
@@ -1984,7 +1990,7 @@ class DexTypeList(object):
         parametersStr = ''
         if self.size:
             for idx in self.list:
-                parametersStr += dexFile.getDexTypeId(idx).decode() + ','
+                parametersStr += dexFile.getDexTypeId(idx) + ','
         return '(%s)' % parametersStr
 
 class DexMethodId(object):
