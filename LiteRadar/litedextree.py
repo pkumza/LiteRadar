@@ -103,7 +103,8 @@ class Tree(object):
 
     def _pre_order_res(self, node, visit, res):
         ret = visit(node, res)
-        if ret < 0:
+
+        if ret == None or ret < 0:
             return
         else:
             for child_pn in node.children:
@@ -140,8 +141,9 @@ class Tree(object):
             sha256_list.append(node.children[child].sha256)
         sha256_list.sort()
         for sha256_item in sha256_list:
-            cur_sha256.update(sha256_item)
+            cur_sha256.update(sha256_item.encode())
         node.sha256 = cur_sha256.hexdigest()
+
         # you could see node.pn here. e.g. Lcom/tencent/mm/sdk/modelpay
 
     def cal_sha256(self):
@@ -162,7 +164,7 @@ class Tree(object):
         if a is None:
             return 1
         # Potential Name is not convincing enough.
-        if u < 8 or float(u) / float(c) < 0.3:
+        if float(u) < 8 or float(u) / float(c) < 0.3:
             return 2
         flag_not_deeper = False
         for lib in labeled_libs:
@@ -277,6 +279,7 @@ class Tree(object):
 
         if a is None:
             return 1
+
         # If the package name is already in no_lib list, ignore it and search its children.
         for non_lib in no_lib:
             if non_lib[0] == a:

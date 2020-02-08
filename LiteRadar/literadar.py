@@ -101,8 +101,16 @@ class LibRadarLite(object):
             # Enable multidex support. If this apk has only a .dex file, then the dex_names array
             # will contain a single element.
             basename = "classes%d.dex"
-            for i in xrange(2, sys.maxint):
+
+            ## Little hack to let Python2 work without much trouble
+            try:
+                x_range = xrange(2, sys.maxint)
+            except:
+                x_range = range(2, sys.maxsize)
+
+            for i in x_range:
                 self.dex_names.append(zf.extract(basename % i, SCRIPT_PATH + "/Data/Decompiled/%s" % self.hex_sha256))
+
         except KeyError:
             pass
 
@@ -113,7 +121,7 @@ class LibRadarLite(object):
             logger.critical("file path %s is not a file" % self.apk_path)
             raise AssertionError
         file_sha256 = hashlib.sha256()
-        f = file(self.apk_path, 'rb')
+        f = open(self.apk_path, 'rb')
         while True:
             block = f.read(4096)
             if not block:
@@ -129,8 +137,9 @@ class LibRadarLite(object):
             return
         offset = 0
         insns_size = dex_method.dexCode.insnsSize * 4
+
         while offset < insns_size:
-            op_code = int(dex_method.dexCode.insns[offset:offset + 2], 16)
+            op_code = int(dex_method.dexCode.insns[int(offset):int(offset + 2)], 16)
             decoded_instruction = dex_parser.dexDecodeInstruction(dex_obj, dex_method.dexCode, offset)
             smali_code = decoded_instruction.smaliCode
             if smali_code is None:
@@ -156,6 +165,7 @@ class LibRadarLite(object):
         permission_list = set()
         # direct methods
         last_method_index = 0
+
         for k in range(len(dex_class_def_obj.directMethods)):
             current_method_index = last_method_index + dex_class_def_obj.directMethods[k].methodIdx
             last_method_index = current_method_index
@@ -166,11 +176,12 @@ class LibRadarLite(object):
             current_method_index = last_method_index + dex_class_def_obj.virtualMethods[k].methodIdx
             last_method_index = current_method_index
             self.get_api_list(dex_obj, dex_class_def_obj.virtualMethods[k], api_list=api_list, permission_list=permission_list)
+        
         # Use sort to pass the tree construction stage.
         # In this case, we could only use a stack to create the package features.
         api_list.sort()
         for api in api_list:
-            class_sha256.update(api)
+            class_sha256.update(api.encode())
         if not IGNORE_ZERO_API_FILES or len(api_list) != 0:
             pass
         return len(api_list), class_sha256.hexdigest(), class_sha256.hexdigest(), sorted(list(permission_list))
@@ -196,11 +207,15 @@ class LibRadarLite(object):
                 """
                 if class_name[0] is not 'L':
                     l_index = class_name.find('L')
+
                     if l_index == '-1':
                         continue
+
                     class_name = class_name[l_index:]
+
                 if IGNORE_ZERO_API_FILES and weight == 0:
                     continue
+
                 self.tree.insert(package_name=class_name, weight=weight, sha256=raw_sha256, permission_list=permission_list)
         return 0
 
