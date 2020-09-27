@@ -20,9 +20,8 @@
 #   All the scripts in LibRadar need import this file.
 
 
-
-import os
 import logging.config
+import os
 
 """
     whether clean the workspace after work
@@ -48,7 +47,6 @@ DB_FEATURE_WEIGHT = 'feature_weight'
 DB_UN_OB_PN = 'un_ob_pn'
 DB_UN_OB_CNT = 'un_ob_cnt'
 
-
 """
     running_processes
 
@@ -59,7 +57,6 @@ DB_UN_OB_CNT = 'un_ob_cnt'
 # RUNNING_PROCESS_NUMBER = 8
 RUNNING_PROCESS_NUMBER = 1
 QUEUE_TIME_OUT = 30
-
 
 """
 IGNORE ZERO API FILES
@@ -74,11 +71,11 @@ Config Files
 """
 
 SCRIPT_PATH = os.path.split(os.path.realpath(__file__))[0]
-if not os.path.exists(SCRIPT_PATH + '/Data'):
-    os.mkdir(SCRIPT_PATH + '/Data')
-FILE_LOGGING = SCRIPT_PATH + '/Data/logging.conf'
-FILE_RULE = SCRIPT_PATH + '/Data/tag_rules.csv'
-LITE_DATASET_10 = SCRIPT_PATH + '/Data/lite_dataset_10.csv'
+if not os.path.exists(os.path.join(SCRIPT_PATH, 'Data')):
+    os.mkdir(os.path.join(SCRIPT_PATH, 'Data'))
+FILE_LOGGING = os.path.join(SCRIPT_PATH, 'Data', 'logging.conf')
+FILE_RULE = os.path.join(SCRIPT_PATH, 'Data', 'tag_rules.csv')
+LITE_DATASET_10 = os.path.join(SCRIPT_PATH, 'Data', 'lite_dataset_10.csv')
 
 """
     Logs
