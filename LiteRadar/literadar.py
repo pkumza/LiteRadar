@@ -33,6 +33,7 @@ class LibRadarLite(object):
     """
     LibRadar
     """
+
     def __init__(self, apk_path):
         """
         Init LibRadar instance with apk_path as a basestring.
@@ -55,7 +56,7 @@ class LibRadarLite(object):
             I think it should be replaced by a hash table as the API list could not be modified during the progress.
         """
         self.k_api_v_permission = dict()
-        with open(SCRIPT_PATH + "/Data/strict_api.csv", 'r') as api_and_permission:
+        with open(os.path.join(SCRIPT_PATH, 'Data', 'strict_api.csv'), 'r') as api_and_permission:
             for line in api_and_permission:
                 api, permission_with_colon = line.split(",")
                 permissions = permission_with_colon[:-2].split(":")
@@ -102,10 +103,10 @@ class LibRadarLite(object):
             # will contain a single element.
             basename = "classes%d.dex"
 
-            ## Little hack to let Python2 work without much trouble
+            # Little hack to let Python2 work without much trouble
             try:
                 x_range = xrange(2, sys.maxint)
-            except:
+            except Exception:
                 x_range = range(2, sys.maxsize)
 
             for i in x_range:
