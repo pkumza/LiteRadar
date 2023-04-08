@@ -206,7 +206,7 @@ class LibRadarLite(object):
                     such as '\x01Lcom/vungle/publisher/inject'
                 don't know exactly but could use code below to deal with it.
                 """
-                if class_name[0] is not 'L':
+                if class_name[0] != 'L':
                     l_index = class_name.find('L')
 
                     if l_index == '-1':
